@@ -57,10 +57,9 @@ function s:EscapedCword() abort
     endif
 endfunction
 
-function s:GetPattern(is_visual, is_g) abort
+function s:GetPattern(is_visual) abort
     return a:is_visual ? s:EscapedVword()
-                \      : a:is_g ? s:Cword()
-                \               : s:EscapedCword()
+                \      : s:EscapedCword()
 endfunction
 
 function s:SearchMatchInfo(pattern) abort
@@ -119,15 +118,15 @@ function keyword#ClearMatches() abort
     endfor
 endfunction
 
-function keyword#Keyword(is_visual, is_g) abort
-    let l:pattern = s:GetPattern(a:is_visual, a:is_g)
+function keyword#Keyword(is_visual) abort
+    let l:pattern = s:GetPattern(a:is_visual)
     if s:HighlightDisable(l:pattern)
         return
     endif
     call s:Highlight(l:pattern)
 endfunction
 
-function keyword#Command(is_visual, is_g) abort
+function keyword#Command(is_visual) abort
     if &lazyredraw == 0
         set lazyredraw
         let l:setlz = ":set nolazyredraw\<CR>"
@@ -140,8 +139,7 @@ function keyword#Command(is_visual, is_g) abort
         let l:setpos = ''
     endif
 
-    let l:args = join([a:is_visual, a:is_g], ',')
-    let l:matchcmd = ":\<C-u>call keyword#Keyword(". l:args . ")\<CR>"
+    let l:matchcmd = ":\<C-u>call keyword#Keyword(". a:is_visual . ")\<CR>"
 
     return l:matchcmd . l:setpos . l:setlz
 endfunction

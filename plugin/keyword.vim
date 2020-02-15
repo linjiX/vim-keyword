@@ -18,7 +18,6 @@ let g:keyword_colors = get(g:, 'keyword_colors', ['002', '004', '005', '006', '0
 let g:keyword_keep_cursor_pos = get(g:, 'keyword_keep_cursor_pos', 1)
 let g:keyword_magic_match_id = get(g:, 'keyword_magic_match_id', 13520)
 
-vnoremap <expr><silent> <Plug>(keyword-*) keyword#Command(1, 0)
-nnoremap <expr><silent> <Plug>(keyword-*) keyword#Command(0, 0)
-nnoremap <expr><silent> <Plug>(keyword-g*) keyword#Command(0, 1)
+xnoremap <expr><silent> <Plug>(keyword-highlight) keyword#Command(1)
+nnoremap <expr><silent> <Plug>(keyword-highlight) keyword#Command(0)
 nnoremap <silent> <Plug>(keyword-clear) :<C-u>call keyword#ClearMatches()<CR>
