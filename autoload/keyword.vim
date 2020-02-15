@@ -148,7 +148,7 @@ function s:WinNewMatch() abort
     endfor
 endfunction
 
-augroup StarKeyword
+augroup VimKeyword
     autocmd!
     autocmd WinNew * call s:WinNewMatch()
 augroup END
