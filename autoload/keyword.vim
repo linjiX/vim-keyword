@@ -27,26 +27,26 @@ endfunction
 let s:match_info = []
 call s:Init()
 
-function keyword#Vword() abort
+function s:Vword() abort
     let l:temp = @s
     noautocmd silent normal! gv"sy
     let [l:temp, @s] = [@s, l:temp]
     return l:temp
 endfunction
 
-function keyword#Cword() abort
+function s:Cword() abort
     let l:temp = @s
     noautocmd silent normal! "syiw
     let [l:temp, @s] = [@s, l:temp]
     return l:temp
 endfunction
 
-function keyword#EscapedVword() abort
-    return '\V'. substitute(escape(keyword#Vword(), '\'), '\n', '\\n', 'g')
+function s:EscapedVword() abort
+    return '\V'. substitute(escape(s:Vword(), '\'), '\n', '\\n', 'g')
 endfunction
 
-function keyword#EscapedCword() abort
-    let l:cword = keyword#Cword()
+function s:EscapedCword() abort
+    let l:cword = s:Cword()
     if empty(l:cword)
         return '\V\n'
     endif
@@ -57,10 +57,10 @@ function keyword#EscapedCword() abort
     endif
 endfunction
 
-function keyword#GetPattern(is_visual, is_g) abort
-    return a:is_visual ? keyword#EscapedVword()
-                \      : a:is_g ? keyword#Cword()
-                \               : keyword#EscapedCword()
+function s:GetPattern(is_visual, is_g) abort
+    return a:is_visual ? s:EscapedVword()
+                \      : a:is_g ? s:Cword()
+                \               : s:EscapedCword()
 endfunction
 
 function s:SearchMatchInfo(pattern) abort
@@ -102,7 +102,7 @@ function keyword#ClearMatches() abort
 endfunction
 
 function keyword#Keyword(is_visual, is_g) abort
-    let l:pattern = keyword#GetPattern(a:is_visual, a:is_g)
+    let l:pattern = s:GetPattern(a:is_visual, a:is_g)
     if s:MatchDelete(l:pattern)
         return
     endif
