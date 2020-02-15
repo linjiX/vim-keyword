@@ -72,22 +72,34 @@ function s:SearchMatchInfo(pattern) abort
     return {}
 endfunction
 
-function s:Match(pattern) abort
+function s:WindoMatchAdd(group, pattern, id) abort
+    let l:winid = win_getid()
+    noautocmd tabdo windo call matchadd(a:group, a:pattern, 10, a:id)
+    noautocmd call win_gotoid(l:winid)
+endfunction
+
+function s:WindoMatchDelete(id) abort
+    let l:winid = win_getid()
+    noautocmd tabdo windo call matchdelete(a:id)
+    noautocmd call win_gotoid(l:winid)
+endfunction
+
+function s:Highlight(pattern) abort
     let l:match = s:SearchMatchInfo('')
     if empty(l:match)
         echomsg 'No more keyword highlight groups'
         return
     endif
-    windo call matchadd(l:match.group, a:pattern, 10, l:match.id)
+    call s:WindoMatchAdd(l:match.group, a:pattern, l:match.id)
     let l:match.pattern = a:pattern
 endfunction
 
-function s:MatchDelete(pattern) abort
+function s:HighlightDisable(pattern) abort
     let l:match = s:SearchMatchInfo(a:pattern)
     if empty(l:match)
         return v:false
     endif
-    windo call matchdelete(l:match.id)
+    call s:WindoMatchDelete(l:match.id)
     let l:match.pattern = ''
     return v:true
 endfunction
@@ -95,7 +107,7 @@ endfunction
 function keyword#ClearMatches() abort
     for l:match in s:match_info
         if !empty(l:match.pattern)
-            windo call matchdelete(l:match.id)
+            call s:WindoMatchDelete(l:match.id)
             let l:match.pattern = ''
         endif
     endfor
@@ -103,10 +115,10 @@ endfunction
 
 function keyword#Keyword(is_visual, is_g) abort
     let l:pattern = s:GetPattern(a:is_visual, a:is_g)
-    if s:MatchDelete(l:pattern)
+    if s:HighlightDisable(l:pattern)
         return
     endif
-    call s:Match(l:pattern)
+    call s:Highlight(l:pattern)
 endfunction
 
 function keyword#Command(is_visual, is_g) abort
