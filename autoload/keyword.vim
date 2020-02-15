@@ -128,6 +128,12 @@ function keyword#Keyword(is_visual, is_g) abort
 endfunction
 
 function keyword#Command(is_visual, is_g) abort
+    if &lazyredraw == 0
+        set lazyredraw
+        let l:setlz = ":set nolazyredraw\<CR>"
+    else
+        let l:setlz = ''
+    endif
     if g:keyword_keep_cursor_pos
         let l:setpos = ":noautocmd call setpos('.', ". string(getcurpos()) .")\<CR>"
     else
@@ -137,7 +143,7 @@ function keyword#Command(is_visual, is_g) abort
     let l:args = join([a:is_visual, a:is_g], ',')
     let l:matchcmd = ":\<C-u>call keyword#Keyword(". l:args . ")\<CR>"
 
-    return l:matchcmd . l:setpos
+    return l:matchcmd . l:setpos . l:setlz
 endfunction
 
 function s:WinNewMatch() abort
