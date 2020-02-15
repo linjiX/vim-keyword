@@ -74,14 +74,20 @@ endfunction
 
 function s:WindoMatchAdd(group, pattern, id) abort
     let l:winid = win_getid()
-    noautocmd tabdo windo call matchadd(a:group, a:pattern, 10, a:id)
-    noautocmd call win_gotoid(l:winid)
+    try
+        noautocmd tabdo windo call matchadd(a:group, a:pattern, 10, a:id)
+    finally
+        noautocmd call win_gotoid(l:winid)
+    endtry
 endfunction
 
 function s:WindoMatchDelete(id) abort
     let l:winid = win_getid()
-    noautocmd tabdo windo call matchdelete(a:id)
-    noautocmd call win_gotoid(l:winid)
+    try
+        noautocmd tabdo windo call matchdelete(a:id)
+    finally
+        noautocmd call win_gotoid(l:winid)
+    endtry
 endfunction
 
 function s:Highlight(pattern) abort
