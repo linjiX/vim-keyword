@@ -84,7 +84,7 @@ endfunction
 function s:WindoMatchDelete(id) abort
     let l:winid = win_getid()
     try
-        noautocmd tabdo windo call matchdelete(a:id)
+        noautocmd silent! tabdo windo call matchdelete(a:id)
     finally
         noautocmd call win_gotoid(l:winid)
     endtry
@@ -129,7 +129,7 @@ endfunction
 
 function keyword#Command(is_visual, is_g) abort
     if g:keyword_keep_cursor_pos
-        let l:setpos = ":call setpos('.', ". string(getcurpos()) .")\<CR>"
+        let l:setpos = ":noautocmd call setpos('.', ". string(getcurpos()) .")\<CR>"
     else
         let l:setpos = ''
     endif
