@@ -27,6 +27,42 @@ endfunction
 let s:match_info = []
 call s:Init()
 
+function keyword#Vword() abort
+    let l:temp = @s
+    noautocmd silent normal! gv"sy
+    let [l:temp, @s] = [@s, l:temp]
+    return l:temp
+endfunction
+
+function keyword#Cword() abort
+    let l:temp = @s
+    noautocmd silent normal! "syiw
+    let [l:temp, @s] = [@s, l:temp]
+    return l:temp
+endfunction
+
+function keyword#EscapedVword() abort
+    return '\V'. substitute(escape(keyword#Vword(), '\'), '\n', '\\n', 'g')
+endfunction
+
+function keyword#EscapedCword() abort
+    let l:cword = keyword#Cword()
+    if empty(l:cword)
+        return '\V\n'
+    endif
+    if match(l:cword, '\w') == -1
+        return '\V'. escape(l:cword, '\')
+    else
+        return '\<'. l:cword .'\>'
+    endif
+endfunction
+
+function keyword#GetPattern(is_visual, is_g) abort
+    return a:is_visual ? keyword#EscapedVword()
+                \      : a:is_g ? keyword#Cword()
+                \               : keyword#EscapedCword()
+endfunction
+
 function s:SearchMatchInfo(pattern) abort
     for l:match in s:match_info
         if l:match.pattern == a:pattern
@@ -66,7 +102,7 @@ function keyword#ClearMatches() abort
 endfunction
 
 function keyword#Keyword(is_visual, is_g) abort
-    let l:pattern = star#GetPattern(a:is_visual, a:is_g)
+    let l:pattern = keyword#GetPattern(a:is_visual, a:is_g)
     if s:MatchDelete(l:pattern)
         return
     endif
