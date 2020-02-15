@@ -14,8 +14,8 @@ function s:Init() abort
         return
     endif
     let l:index = 0
-    for l:color in g:star_keyword_colors
-        let l:id = g:star_keyword_magic_match_id + l:index
+    for l:color in g:keyword_colors
+        let l:id = g:keyword_magic_match_id + l:index
         let l:group = 'Star'. l:index
         execute 'highlight default '. l:group .' ctermfg=0 ctermbg='. l:color
         let l:match = {'group': l:group, 'pattern': '', 'id': l:id}
@@ -128,7 +128,7 @@ function keyword#Keyword(is_visual, is_g) abort
 endfunction
 
 function keyword#Command(is_visual, is_g) abort
-    if g:star_keyword_keep_cursor_pos
+    if g:keyword_keep_cursor_pos
         let l:setpos = ":call setpos('.', ". string(getcurpos()) .")\<CR>"
     else
         let l:setpos = ''
