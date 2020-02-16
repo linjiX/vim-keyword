@@ -10,9 +10,13 @@
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function s:Init() abort
-    if !empty(s:match_info)
+    if exists('g:keyword_init')
         return
     endif
+    let g:keyword_init = 1
+    let s:match_info = []
+    let s:match_stack = []
+
     let l:index = 0
     for l:color in g:keyword_colors
         let l:id = g:keyword_magic_match_id + l:index
@@ -24,8 +28,6 @@ function s:Init() abort
     endfor
 endfunction
 
-let s:match_info = []
-let s:match_stack = []
 call s:Init()
 
 function s:Vword() abort
@@ -157,7 +159,7 @@ function keyword#Command(is_visual) abort
     return l:matchcmd . l:setpos . l:setlz
 endfunction
 
-function s:NavigateCheck(pattern) abort
+function s:CursorPatternCheck(pattern) abort
     let l:curpos = getcurpos()
     try
         noautocmd if !search(a:pattern, 'cbW')
@@ -181,17 +183,24 @@ function s:NavigateCheck(pattern) abort
     endtry
 endfunction
 
-function keyword#Navigate(is_forward) abort
+function keyword#CursorPatternIndex() abort
     for l:index in s:match_stack
         let l:match = s:match_info[l:index]
-        if s:NavigateCheck(l:match.pattern)
-            let l:flag = a:is_forward ? '' : 'b'
-            call search(l:match.pattern, l:flag)
-            return
+        if s:CursorPatternCheck(l:match.pattern)
+            return l:match.index
         endif
     endfor
-    let l:normalcmd = a:is_forward ? 'n' : 'N'
-    execute 'normal! '. l:normalcmd
+    return -1
+endfunction
+
+function keyword#Navigate(is_forward, index) abort
+    let l:pattern = s:match_info[a:index].pattern
+    let l:flag = a:is_forward ? '' : 'b'
+    let l:count = v:count1
+    while l:count
+        call search(l:pattern, l:flag)
+        let l:count -= 1
+    endwhile
 endfunction
 
 function s:WinMatchInit() abort
