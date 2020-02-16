@@ -9,6 +9,15 @@
 "                                                                        "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+function s:HighlightInit()
+    let l:index = 0
+    for l:color in g:keyword_colors
+        let l:group = 'KeywordHighlight'. l:index
+        execute 'highlight default '. l:group .' ctermfg=0 ctermbg='. l:color
+        let l:index += 1
+    endfor
+endfunction
+
 function s:Init() abort
     if exists('g:keyword_init')
         return
@@ -17,11 +26,11 @@ function s:Init() abort
     let s:match_info = []
     let s:match_stack = []
 
+    call s:HighlightInit()
     let l:index = 0
     for l:color in g:keyword_colors
         let l:id = g:keyword_magic_match_id + l:index
         let l:group = 'KeywordHighlight'. l:index
-        execute 'highlight default '. l:group .' ctermfg=0 ctermbg='. l:color
         let l:match = {'index':l:index, 'group': l:group, 'pattern': '', 'id': l:id}
         call add(s:match_info, l:match)
         let l:index += 1
@@ -217,6 +226,6 @@ endfunction
 
 augroup VimKeyword
     autocmd!
-    autocmd WinNew * call s:WinMatchInit()
-    autocmd WinEnter * call s:WinMatchInit()
+    autocmd WinNew,WinEnter * call s:WinMatchInit()
+    autocmd ColorScheme * call s:HighlightInit()
 augroup END
