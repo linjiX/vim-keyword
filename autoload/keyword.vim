@@ -18,13 +18,14 @@ function s:Init() abort
         let l:id = g:keyword_magic_match_id + l:index
         let l:group = 'KeywordHighlight'. l:index
         execute 'highlight default '. l:group .' ctermfg=0 ctermbg='. l:color
-        let l:match = {'group': l:group, 'pattern': '', 'id': l:id}
+        let l:match = {'index':l:index, 'group': l:group, 'pattern': '', 'id': l:id}
         call add(s:match_info, l:match)
         let l:index += 1
     endfor
 endfunction
 
 let s:match_info = []
+let s:match_stack = []
 call s:Init()
 
 function s:Vword() abort
@@ -64,80 +65,72 @@ endfunction
 
 function s:SearchMatchInfo(pattern) abort
     for l:match in s:match_info
-        if l:match.pattern == a:pattern
+        if l:match.pattern ==# a:pattern
             return l:match
         endif
     endfor
     return {}
 endfunction
 
-function s:MatchAdd(group, pattern, id) abort
+function s:Match(is_add, match) abort
     if s:WinMatchInit()
         return
     endif
-    call matchadd(a:group, a:pattern, 10, a:id)
-endfunction
-
-function s:MatchDelete(id) abort
-    if s:WinMatchInit()
-        return
+    if a:is_add
+        call matchadd(a:match.group, a:match.pattern, 10, a:match.id)
+    else
+        call matchdelete(a:match.id)
     endif
-    call matchdelete(a:id)
 endfunction
 
-function s:WindoMatchAdd(group, pattern, id) abort
+function s:WindoMatch(is_add, match) abort
     let l:winid = win_getid()
     try
-        noautocmd tabdo windo call s:MatchAdd(a:group, a:pattern, a:id)
+        if a:is_add
+            call add(s:match_stack, a:match.index)
+        else
+            call remove(s:match_stack, index(s:match_stack, a:match.index))
+        endif
+        noautocmd tabdo windo call s:Match(a:is_add, a:match)
     finally
         noautocmd call win_gotoid(l:winid)
     endtry
 endfunction
 
-function s:WindoMatchDelete(id) abort
-    let l:winid = win_getid()
-    try
-        noautocmd tabdo windo call s:MatchDelete(a:id)
-    finally
-        noautocmd call win_gotoid(l:winid)
-    endtry
-endfunction
-
-function s:KeywordMatchAdd(pattern) abort
+function s:MatchAdd(pattern) abort
     let l:match = s:SearchMatchInfo('')
     if empty(l:match)
         echomsg 'No more keyword highlight groups'
         return
     endif
     let l:match.pattern = a:pattern
-    call s:WindoMatchAdd(l:match.group, a:pattern, l:match.id)
+    call s:WindoMatch(1, l:match)
 endfunction
 
-function s:KeywordMatchDelete(pattern) abort
+function s:MatchDelete(pattern) abort
     let l:match = s:SearchMatchInfo(a:pattern)
     if empty(l:match)
         return v:false
     endif
     let l:match.pattern = ''
-    call s:WindoMatchDelete(l:match.id)
+    call s:WindoMatch(0, l:match)
     return v:true
 endfunction
 
 function keyword#Clear() abort
-    for l:match in s:match_info
-        if !empty(l:match.pattern)
-            call s:WindoMatchDelete(l:match.id)
-            let l:match.pattern = ''
-        endif
+    for l:index in s:match_stack
+        let l:match = s:match_info[l:index]
+        let l:match.pattern = ''
+        call s:WindoMatch(0, l:match)
     endfor
 endfunction
 
 function keyword#Highlight(is_visual) abort
     let l:pattern = s:GetPattern(a:is_visual)
-    if s:KeywordMatchDelete(l:pattern)
+    if s:MatchDelete(l:pattern)
         return
     endif
-    call s:KeywordMatchAdd(l:pattern)
+    call s:MatchAdd(l:pattern)
 endfunction
 
 function keyword#Command(is_visual) abort
@@ -163,10 +156,9 @@ function s:WinMatchInit() abort
         return v:false
     endif
     let w:keyword_init = 1
-    for l:match in s:match_info
-        if !empty(l:match.pattern)
-            call matchadd(l:match.group, l:match.pattern, 10, l:match.id)
-        endif
+    for l:index in s:match_stack
+        let l:match = s:match_info[l:index]
+        call matchadd(l:match.group, l:match.pattern, 10, l:match.id)
     endfor
     return v:true
 endfunction
