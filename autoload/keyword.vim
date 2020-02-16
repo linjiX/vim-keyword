@@ -192,25 +192,28 @@ function s:CursorPatternCheck(pattern) abort
     endtry
 endfunction
 
-function keyword#CursorPatternIndex() abort
+function keyword#NavigatePrepare(is_forward) abort
     for l:index in s:match_stack
         let l:match = s:match_info[l:index]
         if s:CursorPatternCheck(l:match.pattern)
-            return l:match.index
+            let s:navigate_pattern = l:match.pattern
+            let s:navigate_forward = a:is_forward
+            return v:true
         endif
     endfor
-    return -1
+    return v:false
 endfunction
 
-function keyword#Navigate(is_forward, index) abort
-    let l:pattern = s:match_info[a:index].pattern
-    let l:flag = a:is_forward ? '' : 'b'
+function keyword#Navigate() abort
+    let l:flag = s:navigate_forward ? '' : 'b'
     let l:count = v:count1
     while l:count
-        call search(l:pattern, l:flag)
+        call search(s:navigate_pattern, l:flag)
         let l:count -= 1
     endwhile
 endfunction
+
+nnoremap <silent> <Plug>(keyword-navigate) :<C-u>call keyword#Navigate()<CR>
 
 function s:WinMatchInit() abort
     if exists('w:keyword_init')
