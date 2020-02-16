@@ -65,11 +65,17 @@ endfunction
 
 function s:SearchMatchInfo(pattern) abort
     for l:match in s:match_info
-        if l:match.pattern ==# a:pattern
+        if l:match.pattern == a:pattern
             return l:match
         endif
     endfor
     return {}
+endfunction
+
+function s:MatchAdd(group, pattern, id) abort
+    let l:pattern =  &ignorecase ? '\c'. a:pattern
+                \                : a:pattern
+    call matchadd(a:group, l:pattern, 10, a:id)
 endfunction
 
 function s:Match(is_add, match) abort
@@ -77,7 +83,7 @@ function s:Match(is_add, match) abort
         return
     endif
     if a:is_add
-        call matchadd(a:match.group, a:match.pattern, 10, a:match.id)
+        call s:MatchAdd(a:match.group, a:match.pattern, a:match.id)
     else
         call matchdelete(a:match.id)
     endif
@@ -97,7 +103,7 @@ function s:WindoMatch(is_add, match) abort
     endtry
 endfunction
 
-function s:MatchAdd(pattern) abort
+function s:PatternAdd(pattern) abort
     let l:match = s:SearchMatchInfo('')
     if empty(l:match)
         echomsg 'No more keyword highlight groups'
@@ -107,7 +113,7 @@ function s:MatchAdd(pattern) abort
     call s:WindoMatch(1, l:match)
 endfunction
 
-function s:MatchDelete(pattern) abort
+function s:PatternDelete(pattern) abort
     let l:match = s:SearchMatchInfo(a:pattern)
     if empty(l:match)
         return v:false
@@ -127,10 +133,10 @@ endfunction
 
 function keyword#Highlight(is_visual) abort
     let l:pattern = s:GetPattern(a:is_visual)
-    if s:MatchDelete(l:pattern)
+    if s:PatternDelete(l:pattern)
         return
     endif
-    call s:MatchAdd(l:pattern)
+    call s:PatternAdd(l:pattern)
 endfunction
 
 function keyword#Command(is_visual) abort
@@ -158,7 +164,7 @@ function s:WinMatchInit() abort
     let w:keyword_init = 1
     for l:index in s:match_stack
         let l:match = s:match_info[l:index]
-        call matchadd(l:match.group, l:match.pattern, 10, l:match.id)
+        call s:MatchAdd(l:match.group, l:match.pattern, l:match.id)
     endfor
     return v:true
 endfunction
