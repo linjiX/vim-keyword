@@ -21,3 +21,5 @@ let g:keyword_magic_match_id = get(g:, 'keyword_magic_match_id', 13520)
 xnoremap <expr><silent> <Plug>(keyword-highlight) keyword#Command(1)
 nnoremap <expr><silent> <Plug>(keyword-highlight) keyword#Command(0)
 nnoremap <silent> <Plug>(keyword-clear) :<C-u>call keyword#Clear()<CR>
+nnoremap <silent> <Plug>(keyword-forward) :<C-u>call keyword#Navigate(1)<CR>
+nnoremap <silent> <Plug>(keyword-backward) :<C-u>call keyword#Navigate(0)<CR>

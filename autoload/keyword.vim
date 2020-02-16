@@ -157,6 +157,43 @@ function keyword#Command(is_visual) abort
     return l:matchcmd . l:setpos . l:setlz
 endfunction
 
+function s:NavigateCheck(pattern) abort
+    let l:curpos = getcurpos()
+    try
+        noautocmd if !search(a:pattern, 'cbW')
+            return v:false
+        endif
+
+        noautocmd let l:endpos = searchpos(a:pattern, 'ceW')
+        let l:pos = l:curpos[1:2]
+        if l:pos[0] > l:endpos[0]
+            return v:false
+        elseif l:pos[0] < l:endpos[0]
+            return v:true
+        endif
+
+        if l:pos[1] > l:endpos[1]
+            return v:false
+        endif
+        return v:true
+    finally
+        noautocmd call setpos('.', l:curpos)
+    endtry
+endfunction
+
+function keyword#Navigate(is_forward) abort
+    for l:index in s:match_stack
+        let l:match = s:match_info[l:index]
+        if s:NavigateCheck(l:match.pattern)
+            let l:flag = a:is_forward ? '' : 'b'
+            call search(l:match.pattern, l:flag)
+            return
+        endif
+    endfor
+    let l:normalcmd = a:is_forward ? 'n' : 'N'
+    execute 'normal! '. l:normalcmd
+endfunction
+
 function s:WinMatchInit() abort
     if exists('w:keyword_init')
         return v:false
