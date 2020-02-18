@@ -29,15 +29,11 @@ function s:Navigate(is_forward) abort
     endif
 endfunction
 
-function s:Clear() abort
-    if exists('g:keyword_init')
-        return ":\<C-u>call keyword#Clear()\<CR>"
-    endif
-endfunction
-
 xnoremap <expr><silent> <Plug>(keyword-highlight) keyword#Command(1)
 nnoremap <expr><silent> <Plug>(keyword-highlight) keyword#Command(0)
-nnoremap <expr><silent> <Plug>(keyword-clear) <SID>Clear()
+
+nnoremap <expr><silent> <Plug>(keyword-clear)
+            \ exists('g:keyword_init') ? ":\<C-u>call keyword#Clear()\<CR>" : ''
 
 nmap <expr> <Plug>(keyword-forward) <SID>Navigate(1)
 nmap <expr> <Plug>(keyword-backward) <SID>Navigate(0)
