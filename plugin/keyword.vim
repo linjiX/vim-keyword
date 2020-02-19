@@ -37,5 +37,10 @@ nnoremap <expr><silent> <Plug>(keyword-clear)
 
 nmap <expr> <Plug>(keyword-forward) <SID>Navigate(1)
 nmap <expr> <Plug>(keyword-backward) <SID>Navigate(0)
-nnoremap <Plug>(keyword-forward-fallback) n
-nnoremap <Plug>(keyword-backward-fallback) N
+
+if empty(maparg('<Plug>(keyword-forward-fallback)', 'n'))
+    nnoremap <Plug>(keyword-forward-fallback) n
+endif
+if empty(maparg('<Plug>(keyword-backward-fallback)', 'n'))
+    nnoremap <Plug>(keyword-backward-fallback) N
+endif
