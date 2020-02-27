@@ -16,7 +16,7 @@ let g:loaded_keyword = 1
 
 let g:keyword_ctermbg = get(g:, 'keyword_ctrembg', ['002', '004', '005', '006', '013', '009'])
 let g:keyword_guibg = get(g:, 'keyword_guibg',
-            \             ['Orange', 'LightGreen', 'Magenta', 'DarkYellow', 'Cyan', 'Violet'])
+            \             ['LightGreen', 'DarkYellow', 'Violet', 'Cyan', 'Purple', 'Orange'])
 
 let g:keyword_keep_cursor_pos = get(g:, 'keyword_keep_cursor_pos', 1)
 let g:keyword_magic_match_id = get(g:, 'keyword_magic_match_id', 13520)
