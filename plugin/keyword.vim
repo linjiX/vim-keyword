@@ -14,7 +14,9 @@ if exists('g:loaded_keyword')
 endif
 let g:loaded_keyword = 1
 
-let g:keyword_colors = get(g:, 'keyword_colors', ['002', '004', '005', '006', '013', '009'])
+let g:keyword_colors = get(g:,
+            \             'keyword_colors',
+            \             ['DarkGreen', 'DarkBlue', 'DarkMagenta', 'DarkCyan', 'Magenta', 'Red'])
 let g:keyword_keep_cursor_pos = get(g:, 'keyword_keep_cursor_pos', 1)
 let g:keyword_magic_match_id = get(g:, 'keyword_magic_match_id', 13520)
 

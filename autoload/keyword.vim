@@ -13,7 +13,8 @@ function s:HighlightInit()
     let l:index = 0
     for l:color in g:keyword_colors
         let l:group = 'KeywordHighlight'. l:index
-        execute 'highlight default '. l:group .' ctermfg=0 ctermbg='. l:color
+        execute 'highlight default '. l:group .' ctermfg=Black ctermbg='. l:color
+                    \                         .' guifg=Black guibg='. l:color
         let l:index += 1
     endfor
 endfunction
