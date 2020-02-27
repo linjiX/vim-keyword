@@ -14,9 +14,11 @@ if exists('g:loaded_keyword')
 endif
 let g:loaded_keyword = 1
 
-let g:keyword_ctermbg = get(g:, 'keyword_ctrembg', ['002', '004', '005', '006', '013', '009'])
+let g:keyword_ctermfg = get(g:, 'keyword_ctermfg', 0)
+let g:keyword_guifg = get(g:, 'keyword_guifg', '#002b36')
+let g:keyword_ctermbg = get(g:, 'keyword_ctermbg', ['002', '004', '005', '006', '013', '009'])
 let g:keyword_guibg = get(g:, 'keyword_guibg',
-            \             ['LightGreen', 'DarkYellow', 'Violet', 'Cyan', 'Purple', 'Orange'])
+            \             ['#719e07', '#268bd2', '#d33682', '#2aa198', '#6c71c4', '#cb4b16'])
 
 let g:keyword_keep_cursor_pos = get(g:, 'keyword_keep_cursor_pos', 1)
 let g:keyword_magic_match_id = get(g:, 'keyword_magic_match_id', 13520)

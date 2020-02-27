@@ -10,9 +10,9 @@
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 function s:HighlightInit()
-    let l:fg = s:color_mode .'fg=Black'
+    let l:fg = s:color_mode .'fg='. s:fg_color
     let l:index = 0
-    for l:color in s:colors
+    for l:color in s:bg_colors
         let l:group = 'KeywordHighlight'. l:index
         let l:bg = s:color_mode .'bg='. l:color
         execute 'highlight default '. join([l:group, l:fg, l:bg])
@@ -28,14 +28,18 @@ function s:Init() abort
 
     let s:match_info = []
     let s:match_stack = []
-    let s:color_mode = has('gui_running') || (has('termguicolors') && &termguicolors == 1)
-                \ ? 'gui'
-                \ : 'cterm'
-    let s:colors = s:color_mode ==# 'gui' ? g:keyword_guibg : g:keyword_ctermbg
-
+    if has('gui_running') || (has('termguicolors') && &termguicolors == 1)
+        let s:color_mode = 'gui'
+        let s:bg_colors = g:keyword_guibg
+        let s:fg_color = g:keyword_guifg
+    else
+        let s:color_mode = 'cterm'
+        let s:bg_colors = g:keyword_ctermbg
+        let s:fg_color = g:keyword_ctermfg
+    endif
     call s:HighlightInit()
     let l:index = 0
-    for l:color in s:colors
+    for l:color in s:bg_colors
         let l:id = g:keyword_magic_match_id + l:index
         let l:group = 'KeywordHighlight'. l:index
         let l:match = {'index':l:index, 'group': l:group, 'pattern': '', 'id': l:id}
