@@ -2,6 +2,8 @@
 
 highlight multiple different words for better reading
 
+![preview image](preview.png)
+
 ## Features
 
 -   Highlight multiple different words
