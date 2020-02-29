@@ -23,7 +23,7 @@ Plug 'linjiX/vim-keyword'
 Plug 'linjiX/vim-keyword', {'on': '<Plug>(keyword-'}
 ```
 
-## Usage
+## Mappings
 
 ```vim
 " <leader>h for highlight the word under cursor
@@ -42,23 +42,27 @@ nmap N <Plug>(keyword-backward)
 
 ## Configurations
 
-#### Highlight color
+### Highlight color
 
-Cterm color:
+Cterm mode color:
 
 ```vim
 let g:keyword_ctermfg = 0
+
+" The max number of highlight words depends on the length of 'g:keyword_ctermbg'
 let g:keyword_ctermbg = ['002', '004', '005', '006', '013', '009']
 ```
 
-Gui color:
+Gui mode color:
 
 ```vim
 let g:keyword_guifg = '#002b36'
+
+" The max number of highlight words depends on the length of 'g:keyword_guibg'
 let g:keyword_guibg = ['#719e07', '#268bd2', '#d33682', '#2aa198', '#6c71c4', '#cb4b16']
 ```
 
-#### Navigation fallback
+### Navigation fallback
 
 When using the navigation feature, if the word under cursor is not a highlight word,
 the navigation operation will fallback to vim default `n` and `N` navigation.
