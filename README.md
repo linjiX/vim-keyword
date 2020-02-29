@@ -6,7 +6,7 @@ highlight multiple different words for better reading
 
 -   Highlight multiple different words
     -   Support highlight words in all windows and tabs
-    -   Support highlight multiple lines text
+    -   Support highlight text which has multiple lines
 -   Highlight words navigation
     -   Support `[count]n` navigation
 
@@ -16,6 +16,9 @@ with [vim-plug](https://github.com/junegunn/vim-plug)
 
 ```vim
 Plug 'linjiX/vim-keyword'
+
+" Or you can use vim-plug's on-demand loading
+Plug 'linjiX/vim-keyword', {'on': '<Plug>(keyword-'}
 ```
 
 ## Usage
@@ -56,7 +59,7 @@ let g:keyword_guibg = ['#719e07', '#268bd2', '#d33682', '#2aa198', '#6c71c4', '#
 #### Navigation fallback
 
 When using the navigation feature, if the word under cursor is not a highlight word,
-the navigation operation will fallback to vim default `n` anf `N` navigation.
+the navigation operation will fallback to vim default `n` and `N` navigation.
 If you want to change above default behavior, here is some reference.
 
 ```vim
